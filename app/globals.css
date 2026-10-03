@@ -1,26 +1,98 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Four decisions carry colour, and nothing else does. One blue accent for
+   selection and anything interactive. Green for incoming, amber for outgoing,
+   because that distinction is the whole reason to look at an edge. Surfaces,
+   borders and body text are greyscale.
+
+   Light and dark are written out separately rather than one inverted from the
+   other. The resolved theme always sits on the root element, so there is one
+   block per palette and no media query duplicating the dark case. */
+
+:root,
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --sunken: #f4f4f5;
+  --surface: #ffffff;
+  --raised: #fafafa;
+
+  --line: #e4e4e7;
+  --line-strong: #d4d4d8;
+
+  --fg: #18181b;
+  --fg-muted: #71717a;
+  --fg-faint: #a1a1aa;
+
+  --accent: #2563eb;
+  --accent-fg: #ffffff;
+
+  --incoming: #15803d;
+  --outgoing: #b45309;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --sunken: #09090b;
+  --surface: #121214;
+  --raised: #1b1b1f;
+
+  --line: #27272b;
+  --line-strong: #3f3f46;
+
+  --fg: #ededee;
+  --fg-muted: #8b8b93;
+  --fg-faint: #5f5f67;
+
+  --accent: #4f8bf5;
+  --accent-fg: #0b0b0d;
+
+  --incoming: #4ade80;
+  --outgoing: #fbbf24;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-sunken: var(--sunken);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-faint: var(--fg-faint);
+
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+
+  --color-incoming: var(--incoming);
+  --color-outgoing: var(--outgoing);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Clerk's components read these natively. Pointing them at the same tokens is
+   what makes the sign-in screen and the org switcher match, and they follow
+   the theme for free because the tokens they point at already do. The
+   light/dark base comes from color-scheme above, which Clerk also reads. */
+
+:root {
+  --clerk-color-primary: var(--accent);
+  --clerk-color-foreground: var(--fg);
+  --clerk-font-family: var(--font-geist-sans);
+  --clerk-border-radius: 0;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Nothing moves unless it was clicked. That is kept by never writing a
+   transition or an animation, not by a reset that would also break the
+   sign-in widget's own loading states. */
+
+@layer base {
+  :focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: 1px;
+  }
 }
