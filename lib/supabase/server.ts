@@ -4,6 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 
 import { env } from "@/lib/env";
+import type { Database } from "@/lib/supabase/database.types";
 
 // Clerk owns the session. Supabase only verifies the token it is handed, which
 // is why there is no cookie handling and no session refresh here: two things
@@ -16,7 +17,9 @@ import { env } from "@/lib/env";
 export async function supabaseForRequest() {
   const { getToken } = await auth();
 
-  return createClient(env.supabaseUrl, env.supabasePublishableKey, {
+  // Typed off the generated schema, so a query naming a column that isn't
+  // there fails the build rather than coming back empty.
+  return createClient<Database>(env.supabaseUrl, env.supabasePublishableKey, {
     accessToken: () => getToken(),
   });
 }
